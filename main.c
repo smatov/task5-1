@@ -21,7 +21,7 @@
  return c;
  }*/
 
-float getfloat() {
+void getfloat(float **point) {
 	float ans = 0;
 	int *fp = malloc(sizeof(char));
 	int *sp = malloc(sizeof(char));
@@ -45,7 +45,9 @@ float getfloat() {
 
 				if (c == '\n') {
 					ans = *fp;
-					return ans * sg;
+					ans*=sg;
+					*point=&ans;
+					return;
 				}
 			}
 	} else if (c >= '0' && c <= '9')
@@ -56,7 +58,9 @@ float getfloat() {
 
 			if (c == '\n') {
 				ans = *fp;
-				return ans * sg;
+				ans*=sg;
+				*point=&ans;
+				return;
 			}
 		}
 	else {
@@ -66,7 +70,9 @@ float getfloat() {
 
 	if (c == '\n') {
 		ans = *fp;
-		return ans * sg;
+		ans*=sg;
+		*point=&ans;
+		return;
 	}
 	if (c == '.') {
 		c = getchar();
@@ -104,7 +110,8 @@ float getfloat() {
 							st *= 10;
 						ans = *fp;
 						ans = (sg > 0) ? (ans * st) : (ans / st);
-						return ans;
+						*point=&ans;
+						return;
 					} else {
 						printf("Incorrect data entered\n");
 						exit(1);
@@ -132,7 +139,8 @@ float getfloat() {
 	if (f == 0) {
 		ans = *fp + ((float) *sp) / cnt;
 		ans *= sg;
-		return ans;
+		*point=&ans;
+		return;
 	} else {
 		int x = *tp;
 		int st = 1;
@@ -141,14 +149,18 @@ float getfloat() {
 			st *= 10;
 		ans = *fp;
 		ans *= st;
-		return ans;
+		*point=&ans;
+		return;
 
 	}
 }
 
 int main() {
-	float f = getfloat();
-	printf("%.9f\n", f);
+	float *f;
+	getfloat(&f);
+	float x;
+	x=*f;
+	printf("%9f\n",x);
 	return 0;
 
 }
