@@ -15,11 +15,10 @@
 #include <netdb.h>
 #include <fcntl.h>
 
-/*char getch() {
- char c;
- scanf("%c",&c);
- return c;
- }*/
+void addstr(char *s, char *t){
+	while(*s++!='\0');
+	while((*s++=*t++)!='\0');
+}
 
 void getfloat(float *point) {
 	float ans = 0;
@@ -45,8 +44,11 @@ void getfloat(float *point) {
 
 				if (c == '\n') {
 					ans = *fp;
-					ans*=sg;
-					*point=ans;
+					ans *= sg;
+					*point = ans;
+					free(fp);
+					free(sp);
+					free(tp);
 					return;
 				}
 			}
@@ -58,8 +60,11 @@ void getfloat(float *point) {
 
 			if (c == '\n') {
 				ans = *fp;
-				ans*=sg;
-				*point=ans;
+				ans *= sg;
+				*point = ans;
+				free(fp);
+				free(sp);
+				free(tp);
 				return;
 			}
 		}
@@ -70,8 +75,11 @@ void getfloat(float *point) {
 
 	if (c == '\n') {
 		ans = *fp;
-		ans*=sg;
-		*point=ans;
+		ans *= sg;
+		*point = ans;
+		free(fp);
+		free(sp);
+		free(tp);
 		return;
 	}
 	if (c == '.') {
@@ -110,7 +118,10 @@ void getfloat(float *point) {
 							st *= 10;
 						ans = *fp;
 						ans = (sg > 0) ? (ans * st) : (ans / st);
-						*point=ans;
+						*point = ans;
+						free(fp);
+						free(sp);
+						free(tp);
 						return;
 					} else {
 						printf("Incorrect data entered\n");
@@ -127,11 +138,17 @@ void getfloat(float *point) {
 
 			}
 		if (c != '\n') {
+			free(fp);
+			free(sp);
+			free(tp);
 			printf("Incorrect data entered\n");
 			exit(1);
 		}
 
 	} else {
+		free(fp);
+		free(sp);
+		free(tp);
 		printf("Incorrect data entered\n");
 		exit(1);
 	}
@@ -139,7 +156,10 @@ void getfloat(float *point) {
 	if (f == 0) {
 		ans = *fp + ((float) *sp) / cnt;
 		ans *= sg;
-		*point=ans;
+		free(fp);
+		free(sp);
+		free(tp);
+		*point = ans;
 		return;
 	} else {
 		int x = *tp;
@@ -149,18 +169,26 @@ void getfloat(float *point) {
 			st *= 10;
 		ans = *fp;
 		ans *= st;
-		*point=ans;
+		free(fp);
+		free(sp);
+		free(tp);
+		*point = ans;
 		return;
 
 	}
 }
 
 int main() {
-	float *f=malloc(sizeof(char));
+	/*float *f = malloc(sizeof(char));
 	getfloat(f);
 	float x;
-	x=*f;
-	printf("%9f\n",x);
+	x = *f;
+	printf("%.9f\n", x);
+	free(f);*/
+	char *a="abc";
+	char *b="123";
+	addstr(a,b);
+	*a='1';
 	return 0;
 
 }
