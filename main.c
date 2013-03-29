@@ -15,10 +15,7 @@
 #include <netdb.h>
 #include <fcntl.h>
 
-void addstr(char *s, char *t){
-	while(*s++!='\0');
-	while((*s++=*t++)!='\0');
-}
+
 
 void getfloat(float *point) {
 	float ans = 0;
@@ -179,16 +176,12 @@ void getfloat(float *point) {
 }
 
 int main() {
-	/*float *f = malloc(sizeof(char));
+	float *f = malloc(sizeof(char));
 	getfloat(f);
 	float x;
 	x = *f;
 	printf("%.9f\n", x);
-	free(f);*/
-	char *a="abc";
-	char *b="123";
-	addstr(a,b);
-	*a='1';
+	free(f);
 	return 0;
 
 }
