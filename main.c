@@ -15,17 +15,37 @@
 #include <netdb.h>
 #include <fcntl.h>
 
-
-
 void getfloat(float *point) {
-	float ans = 0;
 	int *fp = malloc(sizeof(char));
 	int *sp = malloc(sizeof(char));
 	int *tp = malloc(sizeof(char));
+	int l=xgetfloat(point, fp, sp, tp);
+	free(fp);
+	free(sp);
+	free(tp);
+	if(l<0) exit(1);
+
+}
+
+
+char getintseq(int *fp, char c) {
+	while (isdigit(c)) {
+		*fp = *fp * 10 + (c - '0');
+		if (!(c = getchar()))
+			return c;
+	}
+	return c;
+}
+
+int xgetfloat(float *point, int *fp, int *sp, int *tp) {
+	float ans = 0;
 	char c;
 	int f = 0;
 	int sg = 1;
-	int cnt = 1;
+	float cnt = 1.0;
+	*fp = 0;
+	*sp = 0;
+	*tp = 0;
 	printf("Enter float value\n");
 	/*integer part*/
 
@@ -33,131 +53,80 @@ void getfloat(float *point) {
 	if (c == '-' || c == '+') {
 		sg = c == '-' ? -1 : 1;
 		c = getchar();
-		if (c >= '0' && c <= '9')
-			while (c >= '0' && c <= '9') {
-				*fp = *fp * 10 + (c - '0');
-				if (!(c = getchar()))
-					break;
+		c = getintseq(fp, c);
 
-				if (c == '\n') {
-					ans = *fp;
-					ans *= sg;
-					*point = ans;
-					free(fp);
-					free(sp);
-					free(tp);
-					return;
-				}
-			}
-	} else if (c >= '0' && c <= '9')
-		while (c >= '0' && c <= '9') {
-			*fp = *fp * 10 + (c - '0');
-			if (!(c = getchar()))
-				break;
-
-			if (c == '\n') {
-				ans = *fp;
-				ans *= sg;
-				*point = ans;
-				free(fp);
-				free(sp);
-				free(tp);
-				return;
-			}
+		if (c == '\n') {
+			ans = *fp;
+			ans *= sg;
+			*point = ans;
+			return 1;
 		}
-	else {
-		printf("Incorrect data entered\n");
-		exit(1);
-	}
+	} else
+		c = getintseq(fp, c);
 
 	if (c == '\n') {
 		ans = *fp;
 		ans *= sg;
 		*point = ans;
-		free(fp);
-		free(sp);
-		free(tp);
-		return;
+		return 1;
 	}
+
 	if (c == '.') {
 		c = getchar();
-		if (c >= '0' && c <= '9')
-			while (c >= '0' && c <= '9') {
-				*sp = *sp * 10 + (c - '0');
-				cnt *= 10;
-				if (!(c = getchar()) || c == '\n')
-					break;
+		while (isdigit(c)) {
+			*sp = *sp * 10 + (c - '0');
+			cnt *= 10;
+			if (!(c = getchar()))
+				break;
+		}
 
-			}
-
-	} else if (c == 'e') {
+	} else if (c == 'e' || c == 'E') {
 		f = 1;
 		c = getchar();
 		if (c == '\n') {
 			printf("Incorrect data entered\n");
-			exit(1);
+			return -1;
 		}
 		if (c == '-' || c == '+') {
 			sg = c == '-' ? -1 : 1;
 			c = getchar();
-			if (c >= '0' && c <= '9')
-				while (c >= '0' && c <= '9') {
-					*tp = *tp * 10 + (c - '0');
-					if (!(c = getchar()))
-						break;
+			while (isdigit(c)) {
+				c = getintseq(tp, c);
+				if (c == '\n') {
+					int x = *tp;
+					int st = 1;
+					int i;
+					for (i = 0; i < x; i++)
+						st *= 10;
+					ans = *fp;
+					ans = (sg > 0) ? (ans * st) : (ans / st);
+					*point = ans;
 
-					if (c == '\n') {
-
-						int x = *tp;
-						int st = 1;
-						int i;
-						for (i = 0; i < x; i++)
-							st *= 10;
-						ans = *fp;
-						ans = (sg > 0) ? (ans * st) : (ans / st);
-						*point = ans;
-						free(fp);
-						free(sp);
-						free(tp);
-						return;
-					} else {
-						printf("Incorrect data entered\n");
-						exit(1);
-					}
+					return 1;
+				} else {
+					printf("Incorrect data entered\n");
+					return -1;
 				}
-		}
-
-		if (c >= '0' && c <= '9')
-			while (c >= '0' && c <= '9') {
-				*tp = *tp * 10 + (c - '0');
-				if (!(c = getchar()) || c == '\n')
-					break;
-
 			}
+		}
+		c = getintseq(tp, c);
 		if (c != '\n') {
-			free(fp);
-			free(sp);
-			free(tp);
 			printf("Incorrect data entered\n");
-			exit(1);
+			return -1;
 		}
 
-	} else {
-		free(fp);
-		free(sp);
-		free(tp);
+	}
+	if(c!='\n')
+	{
 		printf("Incorrect data entered\n");
-		exit(1);
+		return -1;
 	}
 
 	if (f == 0) {
-		ans = *fp + ((float) *sp) / cnt;
+		ans = *fp + ((float)*sp)/cnt;
 		ans *= sg;
-		free(fp);
-		free(sp);
-		free(tp);
 		*point = ans;
-		return;
+		return 1;
 	} else {
 		int x = *tp;
 		int st = 1;
@@ -166,11 +135,8 @@ void getfloat(float *point) {
 			st *= 10;
 		ans = *fp;
 		ans *= st;
-		free(fp);
-		free(sp);
-		free(tp);
 		*point = ans;
-		return;
+		return 1;
 
 	}
 }
@@ -180,8 +146,7 @@ int main() {
 	getfloat(f);
 	float x;
 	x = *f;
-	printf("%.9f\n", x);
+	printf("%.6f\n", x);
 	free(f);
 	return 0;
-
 }
